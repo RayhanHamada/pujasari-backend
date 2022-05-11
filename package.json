@@ -6,13 +6,20 @@
   "main": "dist/index.js",
   "scripts": {
     "watch": "parcel watch",
-    "build": "parcel build"
+    "build": "parcel build",
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "Muhammad Rayhan Hamada Budiman <rayhanhamada1999@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^17.0.32",
     "nodemon": "^2.0.16",
     "parcel": "^2.5.0"
+  },
+  "dependencies": {
+    "@fastify/swagger": "^6.0.1",
+    "@sinclair/typebox": "^0.23.5",
+    "fastify": "^3.29.0"
   }
 }

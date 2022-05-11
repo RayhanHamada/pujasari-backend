@@ -1,0 +1,7 @@
+{
+  "exec": "parcel build && node dist/index.js",
+  "watch": ["src"],
+  "ext": "*",
+  "legacyWatch": true,
+  "ignore": ["node_modules"]
+}
