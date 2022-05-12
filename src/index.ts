@@ -2,6 +2,7 @@ import fastifyCors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import { fastify } from 'fastify';
 import ordersRoutes from './routes/orders';
+import productsRoutes from './routes/products';
 
 const app = fastify({ logger: true });
 const port = process.env.PORT || 4000;
@@ -25,6 +26,7 @@ app.register(fastifySwagger, {
 });
 
 app.register(ordersRoutes, { prefix: '/orders' });
+app.register(productsRoutes, { prefix: '/products' });
 
 app.listen(port, (_err, addr) => {
   console.log(`running on ${addr}`);
