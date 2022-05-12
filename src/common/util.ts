@@ -4,7 +4,9 @@ import { ResponseCode } from './types';
 const defaultResponseSchemas = {
   500: Type.Object(
     {
-      errorMsg: Type.Literal('Internal Server Error'),
+      statusCode: Type.Literal(500),
+      error: Type.Literal('Internal Server Error'),
+      message: Type.String(),
     },
     {
       description: 'Internal Server Error',

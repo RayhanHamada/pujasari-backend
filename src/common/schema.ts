@@ -47,9 +47,22 @@ export const DefaultResponse204Schema = Type.Object(
 
 export const DefaultResponse404Schema = Type.Object(
   {
-    errorMsg: Type.Literal('Item Not Found'),
+    statusCode: Type.Literal(404),
+    error: Type.Literal('Not Found'),
+    message: Type.String(),
   },
   {
     description: 'Item Not Found',
+  }
+);
+
+export const DefaultResponse400Schema = Type.Object(
+  {
+    statusCode: Type.Literal(400),
+    error: Type.Literal('Bad Request'),
+    message: Type.String(),
+  },
+  {
+    description: 'Bad Request',
   }
 );

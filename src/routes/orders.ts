@@ -15,6 +15,7 @@ import {
   AvailableBankSchema,
   AvailablePaymentMethodSchema,
   DefaultResponse204Schema,
+  DefaultResponse400Schema,
   DefaultResponse404Schema,
   StatusPemesanan,
 } from '~src/common/schema';
@@ -67,6 +68,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         description: 'Success',
       }
     ),
+    400: DefaultResponse400Schema,
   });
 
   type GetOrdersResponseSchema = ResponseSchema<typeof getOrdersResponseSchema>;
@@ -112,7 +114,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
 
         res.status(200).send(datas as any);
       } catch (e) {
-        res.status(500).send({ errorMsg: 'Internal Server Error' });
+        res.status(500).send();
       }
     }
   );
@@ -195,20 +197,13 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
   });
 
   const updateOrderByIdBody = Type.Object({
-    bank: Type.Optional(AvailableBankSchema),
-    no_vc: Type.Optional(
-      Type.String({
-        description: 'Nomor Virtual Account yang dapat digunakan',
-      })
-    ),
-    payment_method: Type.Optional(AvailablePaymentMethodSchema),
     status: Type.Optional(StatusPemesanan),
-    user_id: Type.Optional(Type.String({ description: 'ID User pemesan' })),
   });
 
   const updateOrderByIdResponseSchema = createResponseSchema({
     204: DefaultResponse204Schema,
     404: DefaultResponse404Schema,
+    400: DefaultResponse400Schema,
   });
 
   fastify.put<{
