@@ -1,6 +1,17 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  QueryConstraint,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import db from '~src/common/db';
+import {
   AvailableBankSchema,
   AvailablePaymentMethodSchema,
   DefaultResponse204Schema,
@@ -26,9 +37,12 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     user_id: Type.Optional(Type.String({ description: 'ID User pemesan' })),
   });
 
+  type GetOrdersQuerySchema = ObjectSchemaToType<typeof getOrdersQuerySchema>;
+
   const getOrdersResponseSchema = createResponseSchema({
     200: Type.Array(
       Type.Object({
+        id: Type.String({ description: 'Id of the orders' }),
         bank: AvailableBankSchema,
         no_vc: Type.String({
           description: 'Nomor Virtual Account yang dapat digunakan',
@@ -37,6 +51,17 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         status: StatusPemesanan,
         time: Type.Number({ description: 'Waktu pemesanan' }),
         user_id: Type.String({ description: 'ID User pemesan' }),
+        checkout_items: Type.Array(
+          Type.Object(
+            {
+              amount: Type.Number({ description: 'Banyak Item' }),
+              item_id: Type.String({ description: 'Id produk' }),
+            },
+            {
+              description: 'Produk-produk yang di checkout',
+            }
+          )
+        ),
       }),
       {
         description: 'Success',
@@ -44,9 +69,11 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     ),
   });
 
+  type GetOrdersResponseSchema = ResponseSchema<typeof getOrdersResponseSchema>;
+
   fastify.get<{
-    Reply: ResponseSchema<typeof getOrdersResponseSchema>;
-    Querystring: ObjectSchemaToType<typeof getOrdersQuerySchema>;
+    Querystring: GetOrdersQuerySchema;
+    Reply: GetOrdersResponseSchema;
   }>(
     '',
     {
@@ -56,8 +83,37 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         querystring: getOrdersQuerySchema,
       },
     },
-    (req, res) => {
+    async (req, res) => {
       // TODO: implement
+      try {
+        const checkoutHistoriesCollection = collection(db, 'checkoutHistories');
+
+        const qcs: QueryConstraint[] = [];
+
+        const requestQuery = req.query;
+
+        Object.keys(requestQuery).forEach((k) => {
+          const rq = requestQuery as any;
+          if (rq[k]) {
+            qcs.push(where(k, '==', rq[k]));
+          }
+        });
+
+        const snapshot = await getDocs(
+          query(checkoutHistoriesCollection, ...qcs)
+        );
+
+        if (snapshot.empty) return res.status(200).send([]);
+
+        const datas = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        res.status(200).send(datas as any);
+      } catch (e) {
+        res.status(500).send({ errorMsg: 'Internal Server Error' });
+      }
     }
   );
 
@@ -71,6 +127,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
   const getOrderByIdResponseSchema = createResponseSchema({
     200: Type.Object(
       {
+        id: Type.String({ description: 'Id of the orders' }),
         bank: AvailableBankSchema,
         no_vc: Type.String({
           description: 'Nomor Virtual Account yang dapat digunakan',
@@ -79,6 +136,17 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         status: StatusPemesanan,
         time: Type.Number({ description: 'Waktu pemesanan' }),
         user_id: Type.String({ description: 'ID User pemesan' }),
+        checkout_items: Type.Array(
+          Type.Object(
+            {
+              amount: Type.Number({ description: 'Banyak Item' }),
+              item_id: Type.String({ description: 'Id produk' }),
+            },
+            {
+              description: 'Produk-produk yang di checkout',
+            }
+          )
+        ),
       },
       {
         description: 'Success',
@@ -100,13 +168,22 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         params: getOrderByIdParamsSchema,
       },
     },
-    (req, res) => {
+    async (req, res) => {
       // TODO: implement
-      if (req.params.id) {
-        console.log(req.params.id);
 
-        res.send();
-      }
+      try {
+        const docRef = doc(db, 'checkoutHistories', req.params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return res.callNotFound();
+        }
+
+        return res.status(200).send({
+          id: docSnap.id,
+          ...docSnap.data(),
+        } as any);
+      } catch (e) {}
     }
   );
 
@@ -148,8 +225,26 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         response: updateOrderByIdResponseSchema,
       },
     },
-    (req, res) => {
+    async (req, res) => {
       // TODO: implement
+      try {
+        const docRef = doc(db, 'checkoutHistories', req.params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return res.callNotFound();
+        }
+
+        await updateDoc(docRef, {
+          ...req.body,
+        })
+          .then(() => {
+            res.code(204).send();
+          })
+          .catch(() => {
+            res.code(500).send();
+          });
+      } catch (e) {}
     }
   );
 

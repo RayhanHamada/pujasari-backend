@@ -22,3 +22,5 @@ export const createResponseSchema = <
     ...responseSchema,
   };
 };
+
+// export const createConverter = () =>

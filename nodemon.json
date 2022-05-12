@@ -1,5 +1,5 @@
 {
-  "exec": "concurrently \"parcel build\" \"node dist/index.js\"",
+  "exec": "parcel build && env-cmd node dist/index.js",
   "watch": ["src"],
   "ext": "*",
   "legacyWatch": true,
