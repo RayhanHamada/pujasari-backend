@@ -37,3 +37,19 @@ export const StatusPemesanan = Type.Union(
     description: 'Status pemesanan produk',
   }
 );
+
+export const DefaultResponse204Schema = Type.Object(
+  {},
+  {
+    description: 'Success. No Content',
+  }
+);
+
+export const DefaultResponse404Schema = Type.Object(
+  {
+    errorMsg: Type.Literal('Item Not Found'),
+  },
+  {
+    description: 'Item Not Found',
+  }
+);

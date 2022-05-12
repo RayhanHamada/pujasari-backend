@@ -3,9 +3,11 @@ import { FastifyPluginAsync } from 'fastify';
 import {
   AvailableBankSchema,
   AvailablePaymentMethodSchema,
+  DefaultResponse204Schema,
+  DefaultResponse404Schema,
   StatusPemesanan,
 } from '~src/common/schema';
-import { ObjectSchemaToType, ResponseSchema } from '~src/common/types';
+import type { ObjectSchemaToType, ResponseSchema } from '~src/common/types';
 import { createResponseSchema } from '~src/common/util';
 
 const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
@@ -82,6 +84,8 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
         description: 'Success',
       }
     ),
+
+    404: DefaultResponse404Schema,
   });
 
   fastify.get<{
@@ -126,12 +130,8 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
   });
 
   const updateOrderByIdResponseSchema = createResponseSchema({
-    204: Type.Object(
-      {},
-      {
-        description: 'Success. No Content',
-      }
-    ),
+    204: DefaultResponse204Schema,
+    404: DefaultResponse404Schema,
   });
 
   fastify.put<{
@@ -139,13 +139,42 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     Body: ObjectSchemaToType<typeof updateOrderByIdBody>;
     Reply: ResponseSchema<typeof updateOrderByIdResponseSchema>;
   }>(
-    '',
+    '/:id',
     {
       schema: {
         description: 'Mengupdate data pesanan',
         params: updateOrderByIdParamSchema,
         body: updateOrderByIdBody,
         response: updateOrderByIdResponseSchema,
+      },
+    },
+    (req, res) => {
+      // TODO: implement
+    }
+  );
+
+  /**
+   * delete pesanan
+   */
+  const deleteOrderByIdParamsSchema = Type.Object({
+    id: Type.String({ description: 'Id pesanan' }),
+  });
+
+  const deleteOrderByIdResponseSchemas = createResponseSchema({
+    204: DefaultResponse204Schema,
+    404: DefaultResponse404Schema,
+  });
+
+  fastify.delete<{
+    Params: ObjectSchemaToType<typeof deleteOrderByIdParamsSchema>;
+    Reply: ResponseSchema<typeof deleteOrderByIdResponseSchemas>;
+  }>(
+    '/:id',
+    {
+      schema: {
+        description: 'Mengupdate data pesanan',
+        params: deleteOrderByIdParamsSchema,
+        response: deleteOrderByIdResponseSchemas,
       },
     },
     (req, res) => {

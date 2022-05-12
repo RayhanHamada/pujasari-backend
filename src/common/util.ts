@@ -1,18 +1,24 @@
 import { TSchema, Type } from '@sinclair/typebox';
 import { ResponseCode } from './types';
 
+const defaultResponseSchemas = {
+  500: Type.Object(
+    {
+      errorMsg: Type.Literal('Internal Server Error'),
+    },
+    {
+      description: 'Internal Server Error',
+    }
+  ),
+};
+
 export const createResponseSchema = <
   T extends Partial<Record<ResponseCode, TSchema>>
 >(
-  responseObject: T
+  responseSchema: T
 ) => {
   return {
-    ...responseObject,
-    500: Type.Object({
-      errorMsg: Type.Literal('Internal Server Error'),
-    }),
-    404: Type.Object({
-      errorMsg: Type.Literal('Item Not Found'),
-    }),
+    ...defaultResponseSchemas,
+    ...responseSchema,
   };
 };
