@@ -2,6 +2,7 @@ import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -185,7 +186,9 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
           id: docSnap.id,
           ...docSnap.data(),
         } as any);
-      } catch (e) {}
+      } catch (e) {
+        res.code(500).send();
+      }
     }
   );
 
@@ -239,7 +242,9 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
           .catch(() => {
             res.code(500).send();
           });
-      } catch (e) {}
+      } catch (e) {
+        res.code(500).send();
+      }
     }
   );
 
@@ -262,13 +267,31 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
-        description: 'Mengupdate data pesanan',
+        description: 'Menghapus data pesanan',
         params: deleteOrderByIdParamsSchema,
         response: deleteOrderByIdResponseSchemas,
       },
     },
-    (req, res) => {
+    async (req, res) => {
       // TODO: implement
+      try {
+        const docRef = doc(db, 'checkoutHistories', req.params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return res.callNotFound();
+        }
+
+        await deleteDoc(docRef)
+          .then(() => {
+            res.code(204).send();
+          })
+          .catch(() => {
+            res.code(500).send();
+          });
+      } catch (e) {
+        res.code(500).send();
+      }
     }
   );
 };
