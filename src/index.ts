@@ -18,7 +18,7 @@ app.register(fastifySwagger, {
     },
   },
   uiConfig: {
-    docExpansion: 'full',
+    docExpansion: 'list',
     deepLinking: false,
   },
 
