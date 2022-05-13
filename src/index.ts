@@ -28,6 +28,10 @@ app.register(fastifySwagger, {
 app.register(ordersRoutes, { prefix: '/orders' });
 app.register(productsRoutes, { prefix: '/products' });
 
-app.listen(port, (_err, addr) => {
-  console.log(`running on ${addr}`);
-});
+app.listen(
+  port,
+  process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost',
+  (_err, addr) => {
+    console.log(`running on ${addr}`);
+  }
+);
