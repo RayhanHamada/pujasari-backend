@@ -2,9 +2,7 @@ import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import {
   addDoc,
-  collection,
   deleteDoc,
-  doc,
   getDoc,
   getDocs,
   query,
@@ -12,7 +10,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import db from '~src/common/db';
 import {
   AvailableKategoriProduct,
   DefaultResponse204Schema,
@@ -20,7 +17,15 @@ import {
   DefaultResponse404Schema,
 } from '~src/common/schema';
 import { ObjectSchemaToType, ResponseSchema } from '~src/common/types';
-import { createResponseSchema } from '~src/common/util';
+import {
+  createCollectionRef,
+  createDocRefFetcher,
+  createResponseSchema,
+} from '~src/common/util';
+
+const collectionName = 'products';
+const colRef = createCollectionRef(collectionName);
+const getDocRef = createDocRefFetcher(collectionName);
 
 const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
   /**
@@ -82,7 +87,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const addedDoc = await addDoc(collection(db, 'products'), req.body);
+        const addedDoc = await addDoc(colRef, req.body);
         const id = addedDoc.id;
 
         res.code(200).send({ id });
@@ -192,7 +197,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
           queries.push(where('promo', '==', rq.promo));
         }
 
-        const queried = query(collection(db, 'products'), ...queries);
+        const queried = query(colRef, ...queries);
 
         const docs = await getDocs(queried);
 
@@ -271,8 +276,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const docRef = doc(db, 'products', req.params.id);
-
+        const docRef = getDocRef(req.params.id);
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
@@ -366,7 +370,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const docRef = doc(db, 'products', req.params.id);
+        const docRef = getDocRef(req.params.id);
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
@@ -420,7 +424,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const docRef = doc(db, 'products', req.params.id);
+        const docRef = getDocRef(req.params.id);
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
