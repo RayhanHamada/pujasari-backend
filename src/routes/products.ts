@@ -147,6 +147,8 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
         }),
       })
     ),
+
+    400: DefaultResponse400Schema,
   });
 
   type GetProductsResponseSchemas = ResponseSchema<
