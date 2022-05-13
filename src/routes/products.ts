@@ -75,7 +75,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '',
     {
       schema: {
-        description: 'Create new product',
+        description: 'Membuat produk baru',
         body: createProductBodySchema,
         response: createProductResponseSchemas,
       },
@@ -166,6 +166,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '',
     {
       schema: {
+        description: 'Mengambil list produk',
         querystring: getProductsQuerySchema,
         response: getProductsResponseSchemas,
       },
@@ -263,6 +264,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
+        description: 'Mengambil produk berdasarkan id',
         params: getProductParamsSchema,
         response: getProductResponseSchemas,
       },
@@ -356,6 +358,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
+        description: 'Mengupdate produk berdasarkan Id',
         params: updateProductParamsSchema,
         body: updateProductBodySchema,
         response: updateProductResponseSchemas,
@@ -410,6 +413,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
+        description: 'Menghapus produk berdasarkan Id',
         params: deleteProductParamsSchema,
         response: deleteProductResponseSchemas,
       },
