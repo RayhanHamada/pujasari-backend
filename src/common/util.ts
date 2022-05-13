@@ -1,4 +1,6 @@
 import { TSchema, Type } from '@sinclair/typebox';
+import { collection, doc } from 'firebase/firestore';
+import db from './db';
 import { ResponseCode } from './types';
 
 const defaultResponseSchemas = {
@@ -25,4 +27,9 @@ export const createResponseSchema = <
   };
 };
 
-// export const createConverter = () =>
+export const createCollectionRef = (collectionName: string) =>
+  collection(db, collectionName);
+
+export const createDocRefFetcher =
+  (collectionName: string) => (docId: string) =>
+    doc(db, collectionName, docId);

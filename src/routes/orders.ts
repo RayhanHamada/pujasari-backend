@@ -1,9 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import {
-  collection,
   deleteDoc,
-  doc,
   getDoc,
   getDocs,
   query,
@@ -11,7 +9,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import db from '~src/common/db';
 import {
   AvailableBankSchema,
   AvailablePaymentMethodSchema,
@@ -21,11 +18,19 @@ import {
   StatusPemesanan,
 } from '~src/common/schema';
 import type { ObjectSchemaToType, ResponseSchema } from '~src/common/types';
-import { createResponseSchema } from '~src/common/util';
+import {
+  createCollectionRef,
+  createDocRefFetcher,
+  createResponseSchema,
+} from '~src/common/util';
+
+const collectionName = 'checkoutHistories';
+const colRef = createCollectionRef(collectionName);
+const getDocRef = createDocRefFetcher(collectionName);
 
 const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
   /**
-   * get orders
+   * Mengambil list pesanan
    */
   const getOrdersQuerySchema = Type.Object({
     bank: Type.Optional(AvailableBankSchema),
@@ -88,8 +93,6 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const checkoutHistoriesCollection = collection(db, 'checkoutHistories');
-
         const qcs: QueryConstraint[] = [];
 
         const requestQuery = req.query;
@@ -101,9 +104,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
           }
         });
 
-        const snapshot = await getDocs(
-          query(checkoutHistoriesCollection, ...qcs)
-        );
+        const snapshot = await getDocs(query(colRef, ...qcs));
 
         if (snapshot.empty) return res.status(200).send([]);
 
@@ -120,7 +121,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
   );
 
   /**
-   * get an order
+   * Mengambil sebuah pesanan berdasarkan id
    */
   const getOrderByIdParamsSchema = Type.Object({
     id: Type.String({ description: 'Id pesanan' }),
@@ -172,7 +173,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const docRef = doc(db, 'checkoutHistories', req.params.id);
+        const docRef = getDocRef(req.params.id);
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
@@ -222,7 +223,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const docRef = doc(db, 'checkoutHistories', req.params.id);
+        const docRef = getDocRef(req.params.id);
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
@@ -270,7 +271,7 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (req, res) => {
       try {
-        const docRef = doc(db, 'checkoutHistories', req.params.id);
+        const docRef = getDocRef(req.params.id);
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
