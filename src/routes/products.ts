@@ -8,6 +8,7 @@ import {
   getDocs,
   query,
   QueryConstraint,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import db from '~src/common/db';
@@ -362,7 +363,24 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
+      try {
+        const docRef = doc(db, 'products', req.params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return res.callNotFound();
+        }
+
+        await updateDoc(docRef, req.body)
+          .then(() => {
+            res.code(204).send();
+          })
+          .catch(() => {
+            res.code(500).send();
+          });
+      } catch (e) {
+        return res.code(500).send();
+      }
     }
   );
 
