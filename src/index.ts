@@ -30,8 +30,10 @@ app.register(productsRoutes, { prefix: '/products' });
 
 app.listen(
   port,
-  process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost',
+  process.env.NODE_ENV === 'production'
+    ? process.env.HOST || '0.0.0.0'
+    : 'localhost',
   (_err, addr) => {
-    console.log(`running on ${addr}`);
+    console.log(`server running on ${addr}:${port}`);
   }
 );
