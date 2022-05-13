@@ -3,6 +3,8 @@ import { FastifyPluginAsync } from 'fastify';
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   QueryConstraint,
@@ -243,7 +245,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
       }),
       promo: Type.Number({
         description: 'Potongan harga/diskon (bentuk pecahan)',
-        examples: [0.4, 0.2],
+        examples: ['0.4', '0.4'],
       }),
     }),
 
@@ -266,7 +268,22 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
+      try {
+        const docRef = doc(db, 'products', req.params.id);
+
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return res.code(404).send();
+        }
+
+        return res.code(200).send({
+          id: docSnap.id,
+          ...docSnap.data(),
+        } as any);
+      } catch (e) {
+        return res.code(500).send();
+      }
     }
   );
 
