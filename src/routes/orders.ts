@@ -87,7 +87,6 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
       try {
         const checkoutHistoriesCollection = collection(db, 'checkoutHistories');
 
@@ -172,8 +171,6 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
-
       try {
         const docRef = doc(db, 'checkoutHistories', req.params.id);
         const docSnap = await getDoc(docRef);
@@ -224,7 +221,6 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
       try {
         const docRef = doc(db, 'checkoutHistories', req.params.id);
         const docSnap = await getDoc(docRef);
@@ -273,7 +269,6 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
       try {
         const docRef = doc(db, 'checkoutHistories', req.params.id);
         const docSnap = await getDoc(docRef);
