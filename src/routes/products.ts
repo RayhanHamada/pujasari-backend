@@ -171,8 +171,6 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
-
       try {
         const queries: QueryConstraint[] = [];
         const rq = req.query;
