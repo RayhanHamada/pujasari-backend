@@ -5,7 +5,7 @@ import ordersRoutes from './routes/orders';
 import productsRoutes from './routes/products';
 
 const app = fastify({ logger: true });
-const port = process.env.NODE_ENV === 'production' ? process.env.PORT! : 4000;
+const port = process.env.PORT || 4000;
 
 app.register(fastifyCors);
 
