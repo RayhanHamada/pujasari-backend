@@ -1,6 +1,13 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  QueryConstraint,
+  where,
+} from 'firebase/firestore';
 import db from '~src/common/db';
 import {
   AvailableKategoriProduct,
@@ -157,8 +164,46 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
         response: getProductsResponseSchemas,
       },
     },
-    (req, res) => {
+    async (req, res) => {
       // TODO: implement
+
+      try {
+        const queries: QueryConstraint[] = [];
+        const rq = req.query;
+
+        if (rq.category) {
+          queries.push(where('category', '==', rq.category));
+        }
+
+        if (rq.hargaMulai) {
+          queries.push(where('harga', '>=', rq.hargaMulai));
+        }
+
+        if (rq.hargaHingga) {
+          queries.push(where('harga', '>=', rq.hargaHingga));
+        }
+
+        if (rq.promo) {
+          queries.push(where('promo', '==', rq.promo));
+        }
+
+        const queried = query(collection(db, 'products'), ...queries);
+
+        const docs = await getDocs(queried);
+
+        if (docs.empty) {
+          return res.code(200).send([]);
+        }
+
+        return res.code(200).send(
+          docs.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as any
+        );
+      } catch (e) {
+        res.code(500).send();
+      }
     }
   );
 
