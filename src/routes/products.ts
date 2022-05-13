@@ -1,5 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
+import { addDoc, collection } from 'firebase/firestore';
+import db from '~src/common/db';
 import {
   AvailableKategoriProduct,
   DefaultResponse204Schema,
@@ -68,7 +70,14 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
+      try {
+        const addedDoc = await addDoc(collection(db, 'products'), req.body);
+        const id = addedDoc.id;
+
+        res.code(200).send({ id });
+      } catch (e) {
+        res.code(500).send();
+      }
     }
   );
 
