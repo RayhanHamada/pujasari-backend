@@ -3,6 +3,7 @@ import { FastifyPluginAsync } from 'fastify';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -416,7 +417,24 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
       },
     },
     async (req, res) => {
-      // TODO: implement
+      try {
+        const docRef = doc(db, 'products', req.params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          return res.callNotFound();
+        }
+
+        return await deleteDoc(docRef)
+          .then(() => {
+            res.code(204).send();
+          })
+          .catch(() => {
+            res.code(500).send();
+          });
+      } catch (e) {
+        return res.code(500).send();
+      }
     }
   );
 };
