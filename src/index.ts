@@ -3,6 +3,7 @@ import fastifySwagger from '@fastify/swagger';
 import { fastify } from 'fastify';
 import ordersRoutes from './routes/orders';
 import productsRoutes from './routes/products';
+import recipesRoutes from './routes/recipes';
 
 const app = fastify({ logger: true });
 const port = process.env.PORT || 4000;
@@ -27,6 +28,7 @@ app.register(fastifySwagger, {
 
 app.register(ordersRoutes, { prefix: '/orders' });
 app.register(productsRoutes, { prefix: '/products' });
+app.register(recipesRoutes, { prefix: '/recipes' });
 
 app.listen(
   port,
