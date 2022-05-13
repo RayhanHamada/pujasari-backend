@@ -48,7 +48,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
     200: Type.Object({
       id: Type.String({ description: 'Id produk yang ditambahkan' }),
     }),
-    // 400: DefaultResponse400Schema,
+    400: DefaultResponse400Schema,
   });
 
   type CreateProductResponseSchemas = ResponseSchema<
