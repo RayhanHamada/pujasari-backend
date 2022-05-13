@@ -7,7 +7,8 @@
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "Muhammad Rayhan Hamada Budiman <rayhanhamada1999@gmail.com>",
