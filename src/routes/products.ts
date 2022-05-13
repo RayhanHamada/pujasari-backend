@@ -280,7 +280,7 @@ const productsRoutes: FastifyPluginAsync = async (fastify, _) => {
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
-          return res.code(404).send();
+          return res.callNotFound();
         }
 
         return res.code(200).send({
