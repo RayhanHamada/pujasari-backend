@@ -80,7 +80,7 @@ const adminsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '',
     {
       schema: {
-        description: 'Membuat admin baru',
+        description: 'Membuat admin baru (Hanya untuk admin owner)',
         body: createAdminBodySchema,
         response: createAdminResponseSchemas,
       },
@@ -153,7 +153,7 @@ const adminsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '',
     {
       schema: {
-        description: 'Mengambil list admin',
+        description: 'Mengambil list admin (Hanya untuk admin owner)',
         querystring: getAdminsQuerySchema,
         response: getAdminsResponseSchemas,
       },
@@ -235,7 +235,7 @@ const adminsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
-        description: 'Mengambil admin berdasarkan id',
+        description: 'Mengambil admin berdasarkan id (Hanya untuk admin owner)',
         params: getAdminParamsSchema,
         response: getAdminResponseSchemas,
       },
@@ -313,7 +313,8 @@ const adminsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
-        description: 'Mengupdate admin berdasarkan Id',
+        description:
+          'Mengupdate admin berdasarkan Id (Hanya untuk admin owner)',
         params: updateAdminParamsSchema,
         body: updateAdminBodySchema,
         response: updateAdminResponseSchemas,
@@ -368,7 +369,7 @@ const adminsRoutes: FastifyPluginAsync = async (fastify, _) => {
     '/:id',
     {
       schema: {
-        description: 'Menghapus admin berdasarkan Id',
+        description: 'Menghapus admin berdasarkan Id (Hanya untuk admin owner)',
         params: deleteAdminParamsSchema,
         response: deleteAdminResponseSchemas,
       },
