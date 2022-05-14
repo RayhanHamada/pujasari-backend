@@ -25,8 +25,10 @@
     "@fastify/cors": "^7.0.0",
     "@fastify/swagger": "^6.0.1",
     "@sinclair/typebox": "^0.23.5",
+    "dayjs": "^1.11.2",
     "fastify": "^3.29.0",
-    "firebase": "^9.8.1"
+    "firebase": "^9.8.1",
+    "firebase-admin": "^10.2.0"
   },
   "engines": {
     "node": ">=16"
