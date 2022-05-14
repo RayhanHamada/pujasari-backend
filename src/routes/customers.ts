@@ -8,7 +8,6 @@ import {
   query,
   QueryConstraint,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import {
   DefaultResponse204Schema,
@@ -94,7 +93,6 @@ const customersRoutes: FastifyPluginAsync = async (fastify, _) => {
         const addedDoc = await addDoc(colRef, {
           ...req.body,
           current_checkout_items: [],
-          user_kind: 'customer',
         });
 
         const id = addedDoc.id;
@@ -185,9 +183,7 @@ const customersRoutes: FastifyPluginAsync = async (fastify, _) => {
     },
     async (_req, res) => {
       try {
-        const queries: QueryConstraint[] = [
-          where('user_kind', '==', 'customer'),
-        ];
+        const queries: QueryConstraint[] = [];
         const queried = query(colRef, ...queries);
         const docs = await getDocs(queried);
 
@@ -293,12 +289,6 @@ const customersRoutes: FastifyPluginAsync = async (fastify, _) => {
           return res.callNotFound();
         }
 
-        const docData = docSnap.data();
-
-        if (docData.user_kind !== 'customer') {
-          return res.callNotFound();
-        }
-
         return res.code(200).send({
           id: docSnap.id,
           ...docSnap.data(),
@@ -396,12 +386,6 @@ const customersRoutes: FastifyPluginAsync = async (fastify, _) => {
           return res.callNotFound();
         }
 
-        const docData = docSnap.data();
-
-        if (docData.user_kind !== 'customer') {
-          return res.callNotFound();
-        }
-
         await updateDoc(docRef, req.body)
           .then(() => {
             res.code(204).send();
@@ -453,12 +437,6 @@ const customersRoutes: FastifyPluginAsync = async (fastify, _) => {
         const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
-          return res.callNotFound();
-        }
-
-        const docData = docSnap.data();
-
-        if (docData.user_kind !== 'customer') {
           return res.callNotFound();
         }
 
