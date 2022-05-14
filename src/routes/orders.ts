@@ -34,14 +34,22 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
    */
   const getOrdersQuerySchema = Type.Object({
     bank: Type.Optional(AvailableBankSchema),
-    no_vc: Type.Optional(
-      Type.String({
-        description: 'Nomor Virtual Account yang dapat digunakan',
-      })
-    ),
     payment_method: Type.Optional(AvailablePaymentMethodSchema),
     status: Type.Optional(StatusPemesanan),
-    user_id: Type.Optional(Type.String({ description: 'ID User pemesan' })),
+    fromDate: Type.Optional(
+      Type.Number({
+        description: 'timestamp awal periode',
+        examples: ['1652521028791'],
+        default: 0,
+      })
+    ),
+    toDate: Type.Optional(
+      Type.Number({
+        description: 'timestamp akhir periode',
+        examples: ['1652521028791'],
+        default: Number.POSITIVE_INFINITY,
+      })
+    ),
   });
 
   type GetOrdersQuerySchema = ObjectSchemaToType<typeof getOrdersQuerySchema>;
@@ -95,14 +103,26 @@ const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
       try {
         const qcs: QueryConstraint[] = [];
 
-        const requestQuery = req.query;
+        const rq = req.query;
+        const equalizables: Exclude<
+          keyof typeof req.query,
+          'toDate' | 'fromDate'
+        >[] = ['bank', 'payment_method', 'status'];
 
-        Object.keys(requestQuery).forEach((k) => {
-          const rq = requestQuery as any;
-          if (rq[k]) {
-            qcs.push(where(k, '==', rq[k]));
+        Object.keys(rq).forEach((k) => {
+          const _rq = rq as any;
+          if (_rq[k] && k in equalizables) {
+            qcs.push(where(k, '==', _rq[k]));
           }
         });
+
+        if (rq.fromDate) {
+          qcs.push(where('time', '>=', rq.fromDate));
+        }
+
+        if (rq.toDate) {
+          qcs.push(where('time', '<=', rq.toDate));
+        }
 
         const snapshot = await getDocs(query(colRef, ...qcs));
 
