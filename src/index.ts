@@ -1,6 +1,7 @@
 import fastifyCors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import { fastify } from 'fastify';
+import adminsRoutes from './routes/admins';
 import customersRoutes from './routes/customers';
 import ordersRoutes from './routes/orders';
 import productsRoutes from './routes/products';
@@ -31,6 +32,7 @@ app.register(ordersRoutes, { prefix: '/orders' });
 app.register(productsRoutes, { prefix: '/products' });
 app.register(recipesRoutes, { prefix: '/recipes' });
 app.register(customersRoutes, { prefix: '/customers' });
+app.register(adminsRoutes, { prefix: '/admins' });
 
 app.listen(
   port,
