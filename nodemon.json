@@ -1,5 +1,5 @@
 {
-  "exec": "parcel build && env-cmd node dist/index.js",
+  "exec": "env-cmd tsx src/index.ts",
   "watch": ["src"],
   "ext": "*",
   "legacyWatch": true,
