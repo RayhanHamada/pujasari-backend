@@ -16,13 +16,13 @@ import {
   DefaultResponse400Schema,
   DefaultResponse404Schema,
   StatusPemesanan,
-} from '~src/common/schema';
-import type { ObjectSchemaToType, ResponseSchema } from '~src/common/types';
+} from 'src/common/schema';
+import type { ObjectSchemaToType, ResponseSchema } from 'src/common/types';
 import {
   createCollectionRef,
   createDocRefFetcher,
   createResponseSchema,
-} from '~src/common/util';
+} from 'src/common/util';
 
 const collectionName = 'checkoutHistories';
 const colRef = createCollectionRef(collectionName);

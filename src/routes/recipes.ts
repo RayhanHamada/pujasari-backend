@@ -13,13 +13,13 @@ import {
   DefaultResponse204Schema,
   DefaultResponse400Schema,
   DefaultResponse404Schema,
-} from '~src/common/schema';
-import { ObjectSchemaToType, ResponseSchema } from '~src/common/types';
+} from 'src/common/schema';
+import { ObjectSchemaToType, ResponseSchema } from 'src/common/types';
 import {
   createCollectionRef,
   createDocRefFetcher,
   createResponseSchema,
-} from '~src/common/util';
+} from 'src/common/util';
 
 const collectionName = 'resep';
 const colRef = createCollectionRef(collectionName);
