@@ -1,7 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import {
-  addDoc,
   deleteDoc,
   getDoc,
   getDocs,
@@ -26,78 +25,6 @@ const colRef = createCollectionRef(collectionName);
 const getDocRef = createDocRefFetcher(collectionName);
 
 const adminsRoutes: FastifyPluginAsync = async (fastify, _) => {
-  /**
-   * Membuat user baru
-   */
-  const createAdminBodySchema = Type.Object({
-    alamat: Type.Optional(
-      Type.String({
-        description: 'Alamat admin',
-        examples: ['Jl. Kenangan 2', 'Jl. Salak 3'],
-        default: '',
-      })
-    ),
-    email: Type.RegEx(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      {
-        description: 'Email admin',
-        examples: ['someone@something.com'],
-      }
-    ),
-    name: Type.String({
-      description: 'Nama admin',
-      examples: ['Aji', 'Budi'],
-    }),
-    no_hp: Type.RegEx(/^\d{12,}$/, {
-      description: 'No handphone admin',
-      examples: ['0812xxxx2343'],
-    }),
-    admin_kind: Type.Optional(
-      Type.Union([Type.Literal('employee'), Type.Literal('owner')], {
-        description: 'Jenis admin (employee, owner)',
-        default: 'employee',
-      })
-    ),
-  });
-
-  type CreateAdminBodySchema = ObjectSchemaToType<typeof createAdminBodySchema>;
-
-  const createAdminResponseSchemas = createResponseSchema({
-    200: Type.Object({
-      id: Type.String({ description: 'Id admin yang ditambahkan' }),
-    }),
-    400: DefaultResponse400Schema,
-  });
-
-  type CreateAdminResponseSchemas = ResponseSchema<
-    typeof createAdminResponseSchemas
-  >;
-
-  fastify.post<{
-    Body: CreateAdminBodySchema;
-    Reply: CreateAdminResponseSchemas;
-  }>(
-    '',
-    {
-      schema: {
-        description: 'Membuat admin baru (Hanya untuk admin owner)',
-        body: createAdminBodySchema,
-        response: createAdminResponseSchemas,
-      },
-    },
-    async (req, res) => {
-      try {
-        const addedDoc = await addDoc(colRef, req.body);
-
-        const id = addedDoc.id;
-
-        res.code(200).send({ id });
-      } catch (e) {
-        res.code(500).send();
-      }
-    }
-  );
-
   /**
    * Melihat list admin
    */
