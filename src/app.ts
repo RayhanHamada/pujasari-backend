@@ -4,8 +4,7 @@ import { fastify } from 'fastify';
 
 import { onReady } from 'src/appHooks';
 import { appConfig, corsConfig, swaggerConfig } from 'src/configs';
-import { adminRoutes } from 'src/routes';
-import customersRoutes from 'src/routes/customers';
+import { adminRoutes, customerRoutes } from 'src/routes';
 
 const app = fastify(appConfig);
 
@@ -19,7 +18,7 @@ app.register(fastifySwagger, swaggerConfig);
  * register routes
  */
 app.register(adminRoutes, { prefix: '/admins' });
-app.register(customersRoutes, { prefix: '/customers' });
+app.register(customerRoutes, { prefix: '/customers' });
 
 /**
  * register hooks
