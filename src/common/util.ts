@@ -1,5 +1,10 @@
 import { TSchema, Type } from '@sinclair/typebox';
-import { collection, doc } from 'firebase/firestore';
+import {
+  collection,
+  CollectionReference,
+  doc,
+  DocumentReference,
+} from 'firebase/firestore';
 import db from './db';
 import { ResponseCode } from './types';
 
@@ -27,9 +32,25 @@ export const createResponseSchema = <
   };
 };
 
-export const createCollectionRef = (collectionName: string) =>
-  collection(db, collectionName);
+// type FirestoreRefsMap = {
+//   colRef: CollectionReference;
+//   docRef: (docId: string) => DocumentReference;
+// };
 
-export const createDocRefFetcher =
-  (collectionName: string) => (docId: string) =>
-    doc(db, collectionName, docId);
+// type CreateFirestoreRefs = <ColName extends string>(
+//   collectionName: ColName
+// ) => {
+//   [K in keyof FirestoreRefsMap as `${ColName}${Capitalize<K>}`]: FirestoreRefsMap[K];
+// };
+
+export const createFirestoreRefs = (collectionName: string) => ({
+  /**
+   * collection reference ke collectionName
+   */
+  colRef: collection(db, collectionName),
+
+  /**
+   * document reference dari collectionName/docId
+   */
+  docRef: (docId: string) => doc(db, collectionName, docId),
+});

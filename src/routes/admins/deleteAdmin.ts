@@ -11,11 +11,8 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import {
-  createCollectionRef,
-  createDocRefFetcher,
-  createResponseSchema,
-} from 'src/common/util';
+import { createResponseSchema } from 'src/common/util';
+import adminUtils from 'src/routes/admins/adminUtils';
 
 const deleteAdminParamsSchema = Type.Object({
   id: Type.String({
@@ -40,13 +37,9 @@ export type DeleteAdminSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof deleteAdminResponseSchemas>;
 }>;
 
-const collectionName = 'admins';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
-
 export const deleteAdmin: CustomRouteHandler<DeleteAdminSchema> =
   async function (req, res) {
-    const docRef = getDocRef(req.params.id);
+    const docRef = adminUtils.docRef(req.params.id);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {

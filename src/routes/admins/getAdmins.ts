@@ -9,12 +9,8 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import {
-  createCollectionRef,
-  createDocRefFetcher,
-  createResponseSchema,
-} from 'src/common/util';
-import { assert } from 'console';
+import { createResponseSchema } from 'src/common/util';
+import adminUtils from 'src/routes/admins/adminUtils';
 
 const getAdminsResponseSchemas = createResponseSchema({
   200: Type.Array(
@@ -64,16 +60,12 @@ export type GetAdminsSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof getAdminsResponseSchemas>;
 }>;
 
-const collectionName = 'admins';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
-
 export const getAdmins: CustomRouteHandler<GetAdminsSchema> = async function (
   req,
   res
 ) {
   const queries: QueryConstraint[] = [];
-  const queried = query(colRef, ...queries);
+  const queried = query(adminUtils.colRef, ...queries);
   const docs = await getDocs(queried)
     .then((v) => {
       this.log.info(`Berhasil mengambil ${v.docs.length} admin`);

@@ -8,11 +8,8 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import {
-  createCollectionRef,
-  createDocRefFetcher,
-  createResponseSchema,
-} from 'src/common/util';
+import { createResponseSchema } from 'src/common/util';
+import adminUtils from 'src/routes/admins/adminUtils';
 
 /**
  * Membuat admin baru
@@ -72,13 +69,9 @@ export type CreateAdminSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof createAdminResponseSchemas>;
 }>;
 
-const collectionName = 'admins';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
-
 export const createAdmin: CustomRouteHandler<CreateAdminSchema> =
   async function (req, res) {
-    const id = await addDoc(colRef, req.body)
+    const id = await addDoc(adminUtils.colRef, req.body)
       .then((doc) => {
         this.log.info(`Added admin id => ${doc.id}`);
 

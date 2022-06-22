@@ -8,11 +8,8 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import {
-  createCollectionRef,
-  createDocRefFetcher,
-  createResponseSchema,
-} from 'src/common/util';
+import { createResponseSchema } from 'src/common/util';
+import customersUtils from 'src/routes/customers/customersUtils';
 
 const getCustomersQuerySchema = Type.Object(
   {},
@@ -20,10 +17,6 @@ const getCustomersQuerySchema = Type.Object(
     description: 'queri GET /customers',
   }
 );
-
-const collectionName = 'users';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
 
 const getCustomersResponseSchemas = createResponseSchema({
   200: Type.Array(
@@ -94,7 +87,7 @@ export type GetCustomersSchema = HandlerGeneric<{
 export const getCustomers: CustomRouteHandler<GetCustomersSchema> =
   async function (req, res) {
     const queries: QueryConstraint[] = [];
-    const queried = query(colRef, ...queries);
+    const queried = query(customersUtils.colRef, ...queries);
     const docs = await getDocs(queried)
       .then((snapshot) => {
         this.log.info(`Fetched ${snapshot.size} customers`);

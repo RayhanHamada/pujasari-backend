@@ -8,15 +8,9 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import {
-  createCollectionRef,
-  createDocRefFetcher,
-  createResponseSchema,
-} from 'src/common/util';
-
-const collectionName = 'users';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
+import { createResponseSchema } from 'src/common/util';
+import adminUtils from 'src/routes/admins/adminUtils';
+import customersUtils from 'src/routes/customers/customersUtils';
 
 const getCustomerParamsSchema = Type.Object({
   id: Type.String({ description: 'Id customer' }),
@@ -88,7 +82,7 @@ export type GetCustomerSchema = HandlerGeneric<{
 
 export const getCustomer: CustomRouteHandler<GetCustomerSchema> =
   async function (req, res) {
-    const docRef = getDocRef(req.params.id);
+    const docRef = customersUtils.docRef(req.params.id);
     const docSnap = await getDoc(docRef)
       .then((docSnap) => {
         this.log.info(`Customer of id ${req.params.id} found`);

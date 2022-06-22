@@ -16,11 +16,8 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import {
-  createCollectionRef,
-  createDocRefFetcher,
-  createResponseSchema,
-} from 'src/common/util';
+import { createResponseSchema } from 'src/common/util';
+import adminUtils from 'src/routes/admins/adminUtils';
 
 const updateAdminParamsSchema = Type.Object({
   id: Type.String({ description: 'Id admin yang ingin di update' }),
@@ -67,13 +64,9 @@ export const updateAdminSchema: FastifySchema = {
   response: updateAdminResponseSchemas,
 };
 
-const collectionName = 'admins';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
-
 export const updateAdmin: CustomRouteHandler<UpdateAdminSchema> =
   async function (req, res) {
-    const docRef = getDocRef(req.params.id);
+    const docRef = adminUtils.docRef(req.params.id);
 
     const success = await updateDoc(docRef, req.body)
       .then((d) => {
