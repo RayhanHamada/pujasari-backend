@@ -8,9 +8,7 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import adminUtils from 'src/routes/admins/adminUtils';
-import customersUtils from 'src/routes/customers/customersUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 const getCustomerParamsSchema = Type.Object({
   id: Type.String({ description: 'Id customer' }),
@@ -80,10 +78,11 @@ export type GetCustomerSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof getCustomerResponseSchemas>;
 }>;
 
+const { docRef } = createFirestoreRefs('users');
+
 export const getCustomer: CustomRouteHandler<GetCustomerSchema> =
   async function (req, res) {
-    const docRef = customersUtils.docRef(req.params.id);
-    const docSnap = await getDoc(docRef)
+    const docSnap = await getDoc(docRef(req.params.id))
       .then((docSnap) => {
         this.log.info(`Customer of id ${req.params.id} found`);
 

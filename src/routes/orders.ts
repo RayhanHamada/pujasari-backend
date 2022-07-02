@@ -24,10 +24,6 @@ import {
   createResponseSchema,
 } from 'src/common/util';
 
-const collectionName = 'checkoutHistories';
-const colRef = createCollectionRef(collectionName);
-const getDocRef = createDocRefFetcher(collectionName);
-
 const ordersRoutes: FastifyPluginAsync = async (fastify, _) => {
   /**
    * Mengambil list pesanan

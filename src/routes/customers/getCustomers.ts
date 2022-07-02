@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { FastifySchema } from 'fastify';
-import { QueryConstraint, query, getDocs } from 'firebase/firestore';
+import { getDocs, query, QueryConstraint } from 'firebase/firestore';
 import { DefaultResponse400Schema } from 'src/common/schema';
 import {
   CustomRouteHandler,
@@ -8,8 +8,7 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import customersUtils from 'src/routes/customers/customersUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 const getCustomersQuerySchema = Type.Object(
   {},
@@ -84,10 +83,12 @@ export type GetCustomersSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof getCustomersResponseSchemas>;
 }>;
 
+const { colRef } = createFirestoreRefs('users');
+
 export const getCustomers: CustomRouteHandler<GetCustomersSchema> =
   async function (req, res) {
     const queries: QueryConstraint[] = [];
-    const queried = query(customersUtils.colRef, ...queries);
+    const queried = query(colRef, ...queries);
     const docs = await getDocs(queried)
       .then((snapshot) => {
         this.log.info(`Fetched ${snapshot.size} customers`);

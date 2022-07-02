@@ -1,10 +1,5 @@
 import { TSchema, Type } from '@sinclair/typebox';
-import {
-  collection,
-  CollectionReference,
-  doc,
-  DocumentReference,
-} from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import db from './db';
 import { ResponseCode } from './types';
 
