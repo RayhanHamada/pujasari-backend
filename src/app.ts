@@ -4,7 +4,12 @@ import { fastify } from 'fastify';
 
 import { onReady } from 'src/appHooks';
 import { appConfig, corsConfig, swaggerConfig } from 'src/configs';
-import { adminRoutes, customerRoutes } from 'src/routes';
+import {
+  adminRoutes,
+  customerRoutes,
+  orderRoutes,
+  productRoutes,
+} from 'src/routes';
 
 const app = fastify(appConfig);
 
@@ -17,8 +22,21 @@ app.register(fastifySwagger, swaggerConfig);
 /**
  * register routes
  */
-app.register(adminRoutes, { prefix: '/admins' });
-app.register(customerRoutes, { prefix: '/customers' });
+app.register(adminRoutes, {
+  prefix: '/admins',
+});
+
+app.register(customerRoutes, {
+  prefix: '/customers',
+});
+
+app.register(orderRoutes, {
+  prefix: '/orders',
+});
+
+app.register(productRoutes, {
+  prefix: '/products',
+});
 
 /**
  * register hooks
