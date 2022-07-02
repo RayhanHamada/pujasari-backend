@@ -11,8 +11,7 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import adminUtils from 'src/routes/admins/adminUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 const deleteAdminParamsSchema = Type.Object({
   id: Type.String({
@@ -37,22 +36,24 @@ export type DeleteAdminSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof deleteAdminResponseSchemas>;
 }>;
 
+const { docRef } = createFirestoreRefs('admins');
+
 export const deleteAdmin: CustomRouteHandler<DeleteAdminSchema> =
   async function (req, res) {
-    const docRef = adminUtils.docRef(req.params.id);
-    const docSnap = await getDoc(docRef);
+    const ref = docRef(req.params.id);
+    const docSnap = await getDoc(ref);
 
     if (!docSnap.exists()) {
       return res.callNotFound();
     }
 
-    const deleted = await deleteDoc(docRef)
+    const deleted = await deleteDoc(ref)
       .then(() => {
-        this.log.info(`Admin ${docRef.id} terhapus`);
+        this.log.info(`Admin ${ref.id} terhapus`);
         return true;
       })
       .catch((err) => {
-        this.log.error(`Admin ${docRef.id} tidak berhasil terhapus`);
+        this.log.error(`Admin ${ref.id} tidak berhasil terhapus`);
         this.log.trace(err);
 
         return false;

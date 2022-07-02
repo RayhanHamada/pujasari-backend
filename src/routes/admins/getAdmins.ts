@@ -1,16 +1,14 @@
 import { Type } from '@sinclair/typebox';
 import type { FastifySchema } from 'fastify';
-import { getDocs, query } from 'firebase/firestore';
 import type { QueryConstraint } from 'firebase/firestore';
+import { getDocs, query } from 'firebase/firestore';
 import { DefaultResponse400Schema } from 'src/common/schema';
 import {
   CustomRouteHandler,
   HandlerGeneric,
-  ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import adminUtils from 'src/routes/admins/adminUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 const getAdminsResponseSchemas = createResponseSchema({
   200: Type.Array(
@@ -60,12 +58,14 @@ export type GetAdminsSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof getAdminsResponseSchemas>;
 }>;
 
+const { colRef } = createFirestoreRefs('admins');
+
 export const getAdmins: CustomRouteHandler<GetAdminsSchema> = async function (
   req,
   res
 ) {
   const queries: QueryConstraint[] = [];
-  const queried = query(adminUtils.colRef, ...queries);
+  const queried = query(colRef, ...queries);
   const docs = await getDocs(queried)
     .then((v) => {
       this.log.info(`Berhasil mengambil ${v.docs.length} admin`);

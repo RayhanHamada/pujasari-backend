@@ -8,8 +8,7 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import adminUtils from 'src/routes/admins/adminUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 /**
  * Membuat admin baru
@@ -69,9 +68,11 @@ export type CreateAdminSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof createAdminResponseSchemas>;
 }>;
 
+const { colRef } = createFirestoreRefs('admins');
+
 export const createAdmin: CustomRouteHandler<CreateAdminSchema> =
   async function (req, res) {
-    const id = await addDoc(adminUtils.colRef, req.body)
+    const id = await addDoc(colRef, req.body)
       .then((doc) => {
         this.log.info(`Added admin id => ${doc.id}`);
 

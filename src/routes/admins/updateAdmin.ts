@@ -3,12 +3,12 @@
  */
 
 import { Type } from '@sinclair/typebox';
-import fastify, { FastifySchema } from 'fastify';
-import { getDoc, updateDoc } from 'firebase/firestore';
+import { FastifySchema } from 'fastify';
+import { updateDoc } from 'firebase/firestore';
 import {
   DefaultResponse204Schema,
-  DefaultResponse404Schema,
   DefaultResponse400Schema,
+  DefaultResponse404Schema,
 } from 'src/common/schema';
 import {
   CustomRouteHandler,
@@ -16,8 +16,7 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import adminUtils from 'src/routes/admins/adminUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 const updateAdminParamsSchema = Type.Object({
   id: Type.String({ description: 'Id admin yang ingin di update' }),
@@ -64,26 +63,22 @@ export const updateAdminSchema: FastifySchema = {
   response: updateAdminResponseSchemas,
 };
 
+const { docRef } = createFirestoreRefs('admins');
+
 export const updateAdmin: CustomRouteHandler<UpdateAdminSchema> =
   async function (req, res) {
-    const docRef = adminUtils.docRef(req.params.id);
+    const ref = docRef(req.params.id);
 
-    const success = await updateDoc(docRef, req.body)
-      .then((d) => {
+    await updateDoc(ref, req.body)
+      .then(() => {
         this.log.info(`Update admin dengan id ${req.params.id} Berhasil`);
 
-        return true;
+        return res.code(204).send();
       })
       .catch((err) => {
         this.log.error(`Gagal mengupdate data admin ${req.params.id}`);
         this.log.trace(err);
 
-        return false;
+        return res.code(500).send();
       });
-
-    if (!success) {
-      return res.callNotFound();
-    }
-
-    return res.code(204).send();
   };

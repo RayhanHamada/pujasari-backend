@@ -8,8 +8,7 @@ import {
   ObjectSchemaToType,
   ResponseSchema,
 } from 'src/common/types';
-import { createResponseSchema } from 'src/common/util';
-import adminUtils from 'src/routes/admins/adminUtils';
+import { createFirestoreRefs, createResponseSchema } from 'src/common/util';
 
 const getAdminParamsSchema = Type.Object({
   id: Type.String({
@@ -67,12 +66,14 @@ export type GetAdminSchema = HandlerGeneric<{
   Reply: ResponseSchema<typeof getAdminResponseSchemas>;
 }>;
 
+const { docRef } = createFirestoreRefs('admins');
+
 export const getAdmin: CustomRouteHandler<GetAdminSchema> = async function (
   req,
   res
 ) {
-  const docRef = adminUtils.docRef(req.params.id);
-  const docSnap = await getDoc(docRef);
+  const ref = docRef(req.params.id);
+  const docSnap = await getDoc(ref);
 
   if (!docSnap.exists()) {
     return res.callNotFound();
